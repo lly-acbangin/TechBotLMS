@@ -1,29 +1,13 @@
 const questions = [
-    {
-        question: "What does HTML stand for?",
-        options: ["HyperText Markup Language", "High Tech Modern Language", "HyperText Modern Logic", "Home Tool Markup Language"],
-        answer: "HyperText Markup Language"
-    },
-    {
-        question: "Which programming language is used for web styling?",
-        options: ["JavaScript", "CSS", "PHP", "Python"],
-        answer: "CSS"
-    },
-    {
-        question: "What does CPU stand for?",
-        options: ["Central Processing Unit", "Computer Personal Unit", "Central Process Utility", "Central Processor Unifier"],
-        answer: "Central Processing Unit"
-    },
-    {
-        question: "Which of these is not a JavaScript framework?",
-        options: ["React", "Angular", "Django", "Vue"],
-        answer: "Django"
-    },
-    {
-        question: "What is the purpose of SQL?",
-        options: ["Styling websites", "Database management", "Server configuration", "Network protocols"],
-        answer: "Database management"
-    }
+    { question: "What does HTML stand for?", options: ["HyperText Markup Language", "High Tech Modern Language", "HyperText Modern Logic", "Home Tool Markup Language"], answer: "HyperText Markup Language" },
+    { question: "What is the primary purpose of CSS?", options: ["To create web content", "To style and layout web pages", "To connect databases", "To manage web servers"], answer: "To style and layout web pages" },
+    { question: "Which symbol is used for comments in JavaScript?", options: ["#", "//", "/* */", "--"], answer: "//" },
+    { question: "What keyword is used to declare a variable in JavaScript?", options: ["var", "declare", "int", "def"], answer: "var" },
+    { question: "Which function is used to display text in the console in JavaScript?", options: ["print()", "echo()", "console.log()", "display()"], answer: "console.log()" },
+    { question: "Which programming language is used for web styling?", options: ["JavaScript", "CSS", "PHP", "Python"], answer: "CSS" },
+    { question: "What does CPU stand for?", options: ["Central Processing Unit", "Computer Personal Unit", "Central Process Utility", "Central Processor Unifier"], answer: "Central Processing Unit" },
+    { question: "Which of these is not a JavaScript framework?", options: ["React", "Angular", "Django", "Vue"], answer: "Django" },
+    { question: "What is the purpose of SQL?", options: ["Styling websites", "Database management", "Server configuration", "Network protocols"], answer: "Database management" }
 ];
 
 let currentQuestion = 0;
@@ -40,147 +24,145 @@ const progressBar = document.getElementById("progress-bar");
 const quizHeader = document.getElementById("quiz-number");
 const timerDisplay = document.querySelector(".timer-display");
 
-// Add these functions to display questions and handle interactions
-
-// Initialize the quiz when the page loads
-function initializeQuiz() {
-    // Create progress bar steps
-    createProgressBar();
-    // Display first question
-    displayQuestion();
-    // Update score display
-    updateScore();
-    // Start timer
-    startTimer();
-    
-    // Add event listener for Next button
-    nextButton.addEventListener('click', handleNextButton);
-}
-
-// Display the current question and options
-function displayQuestion() {
-    const currentQ = questions[currentQuestion];
-    questionBox.textContent = currentQ.question;
-    
-    // Clear previous options
-    optionsContainer.innerHTML = '';
-    
-    // Create new option buttons
-    currentQ.options.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option;
-        button.classList.add('option');
-        button.addEventListener('click', () => selectOption(option));
-        optionsContainer.appendChild(button);
-    });
-    
-    // Update quiz number
+function loadQuestion() {
+    clearTimeout(timer);
+    const current = questions[currentQuestion];
     quizHeader.textContent = currentQuestion + 1;
-}
+    questionBox.textContent = current.question;
+    optionsContainer.innerHTML = "";
 
-// Handle option selection
-function selectOption(selectedOption) {
-    // Store user's answer
-    answers[currentQuestion] = selectedOption;
-    
-    // Highlight the selected option
-    const options = document.querySelectorAll('.option');
-    options.forEach(option => {
-        option.classList.remove('selected');
-        if (option.textContent === selectedOption) {
-            option.classList.add('selected');
-        }
+    current.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.classList.add("option");
+        btn.textContent = option;
+        btn.addEventListener("click", () => checkAnswer(option));
+        optionsContainer.appendChild(btn);
     });
-    
-    // Check if answer is correct and update score
-    if (selectedOption === questions[currentQuestion].answer) {
-        if (!answers.includes(selectedOption)) {
-            score++;
-            updateScore();
-        }
-    }
+
+    startTimer();
 }
 
-// Handle Next button click
-function handleNextButton() {
-    clearInterval(timer);
-    
-    if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        timeLeft = 10;
-        displayQuestion();
-        startTimer();
-        updateProgressBar();
-    } else {
-        // End of quiz
-        showResults();
-    }
-}
-
-// Create progress bar steps
-function createProgressBar() {
-    for (let i = 0; i < questions.length; i++) {
-        const step = document.createElement('div');
-        step.classList.add('progress-step');
-        if (i === 0) step.classList.add('active');
-        progressBar.appendChild(step);
-    }
-}
-
-// Update progress bar
-function updateProgressBar() {
-    const steps = document.querySelectorAll('.progress-step');
-    steps.forEach((step, index) => {
-        if (index <= currentQuestion) {
-            step.classList.add('active');
-        } else {
-            step.classList.remove('active');
-        }
-    });
-}
-
-// Update score display
-function updateScore() {
-    scoreDisplay.textContent = `${score}/${questions.length}`;
-}
-
-// Start timer for current question
 function startTimer() {
-    timerDisplay.textContent = `Time: ${timeLeft}s`;
+    timeLeft = 10;
+    updateTimerDisplay();
+
+    if (timer) clearInterval(timer);
     timer = setInterval(() => {
         timeLeft--;
-        timerDisplay.textContent = `Time: ${timeLeft}s`;
-        
+        updateTimerDisplay();
+
         if (timeLeft <= 0) {
             clearInterval(timer);
-            handleNextButton();
+            showCorrectAnswer();
+            setTimeout(moveToNextQuestion, 1000);
         }
     }, 1000);
 }
 
-// Show quiz results
-function showResults() {
-    questionBox.textContent = `Quiz Complete! Your score: ${score}/${questions.length}`;
-    optionsContainer.innerHTML = '';
-    nextButton.style.display = 'none';
-    
-    // Display all questions and answers
-    questions.forEach((q, index) => {
-        const resultItem = document.createElement('div');
-        resultItem.classList.add('result-item');
-        
-        const userAnswer = answers[index] || 'Not answered';
-        const isCorrect = userAnswer === q.answer;
-        
-        resultItem.innerHTML = `
-            <p><strong>Q${index + 1}:</strong> ${q.question}</p>
-            <p>Your answer: ${userAnswer} ${isCorrect ? '✓' : '✗'}</p>
-            <p>Correct answer: ${q.answer}</p>
-        `;
-        
-        optionsContainer.appendChild(resultItem);
-    });
+function updateTimerDisplay() {
+    scoreDisplay.textContent = `${score}/${questions.length}`;
+    timerDisplay.textContent = `${timeLeft}/10`;
 }
 
-// Start the quiz when the page loads
-window.onload = initializeQuiz;
+function checkAnswer(selectedOption) {
+    clearInterval(timer);
+    const correctAnswer = questions[currentQuestion].answer;
+    const options = document.querySelectorAll(".option");
+
+    let isCorrect = false;
+
+    options.forEach(btn => {
+        if (btn.textContent === correctAnswer) {
+            btn.style.backgroundColor = "#8BC34A";
+        } else if (btn.textContent === selectedOption) {
+            btn.style.backgroundColor = "#F44336";
+        }
+        btn.disabled = true;
+
+        if (selectedOption === correctAnswer) {
+            isCorrect = true;
+        }
+    });
+
+    answers.push({
+        question: questions[currentQuestion].question,
+        selected: selectedOption,
+        correct: correctAnswer
+    });
+
+    if (isCorrect) score++;
+    updateProgressBar(isCorrect);
+
+    setTimeout(moveToNextQuestion, 1000);
+}
+
+function showCorrectAnswer() {
+    const correctAnswer = questions[currentQuestion].answer;
+    const options = document.querySelectorAll(".option");
+
+    options.forEach(btn => {
+        if (btn.textContent === correctAnswer) {
+            btn.style.backgroundColor = "#8BC34A";
+        }
+        btn.disabled = true;
+    });
+
+    answers.push({
+        question: questions[currentQuestion].question,
+        selected: null,
+        correct: correctAnswer
+    });
+
+    updateProgressBar(false);
+}
+
+function updateProgressBar(isCorrect) {
+    const progressStep = document.createElement("div");
+    progressStep.classList.add("progress-step");
+    progressStep.style.backgroundColor = isCorrect ? "#8BC34A" : "#F44336";
+    progressBar.appendChild(progressStep);
+}
+
+function moveToNextQuestion() {
+    if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        loadQuestion();
+    } else {
+        displayResults();
+    }
+}
+
+function displayResults() {
+    document.body.innerHTML = `
+        <div class="result-container">
+            <h1>Quiz Completed!</h1>
+            <p class="final-score">Your Score: ${score}/${questions.length}</p>
+            <div class="result-details">
+                <div class="column-left">
+                    ${answers.slice(0, 5).map(answer => formatResultItem(answer)).join('')}
+                </div>
+                <div class="column-right">
+                    ${answers.slice(5).map(answer => formatResultItem(answer)).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function formatResultItem(answer) {
+    return `
+        <div class="result-item" style="background-color: ${answer.selected === answer.correct ? '#8BC34A' : '#F44336'};">
+            <p><strong>${answer.question}</strong></p>
+            <p>Your Answer: ${answer.selected || "No Answer"}</p>
+            <p>Correct Answer: ${answer.correct}</p>
+        </div>
+    `;
+}
+
+nextButton.addEventListener("click", () => {
+    if (currentQuestion < questions.length) {
+        moveToNextQuestion();
+    }
+});
+
+loadQuestion();
