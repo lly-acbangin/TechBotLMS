@@ -6,6 +6,8 @@ body {
     align-items: center;
     height: 100vh; /* Make sure body takes up the full viewport height */
     margin: 0;
+    padding-top: 50px; /* Adds a gap between score and the top */
+    padding-bottom: 50px; /* Adds a gap between content and the bottom */
 }
 
 .quiz-container {
@@ -105,11 +107,20 @@ body {
     background-color: #095402;
 }
 
+.result-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
 .result-item {
+    width: 45%;
     border: 1px solid #ddd;
     padding: 10px;
     margin: 5px 0;
     border-radius: 5px;
+    text-align: center;
 }
 
 .option.selected {
