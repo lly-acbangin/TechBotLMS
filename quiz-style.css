@@ -1,0 +1,122 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Make sure body takes up the full viewport height */
+    margin: 0;
+}
+
+.quiz-container {
+    width: 90%;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    position: relative; /* Important for positioning the next button */
+}
+
+.timer-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: #f44336;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.quiz-header {
+    background-color: #4CAF50;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    font-size: 24px;
+}
+
+.progress-bar {
+    display: flex;
+    height: 8px;
+    margin: 10px 20px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-step {
+    width: 10%;
+    background-color: transparent;
+}
+
+.quiz-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.question-box {
+    background-color: #fff3cd;
+    padding: 15px;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.answer-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center; /* Center the options horizontally */
+}
+
+.option {
+    background-color: #cdd9b5;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 40%; /* Adjust as needed */
+}
+
+.option:hover {
+    background-color: #b0c49d;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: relative;
+}
+
+#next-btn {
+    background-color: #0b3d02;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    /* Not using absolute positioning anymore */
+    margin-left: auto;
+}
+
+#next-btn:hover {
+    background-color: #095402;
+}
+
+.result-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.option.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.progress-step.active {
+    background-color: #4CAF50;
+}
